@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Assessment</title>
+
+<link rel="stylesheet" href="vendor/bootstrap/bootstrap.min.css">
+<link rel="stylesheet" href="css/style.css">
+
+<style>
+body {
+background: linear-gradient(135deg, #1d2b64, #f8cdda);
+color: white;
+min-height: 100vh;
+padding-top: 70px;
+}
+
+/* Navbar */
+.custom-navbar{
+background: rgba(0,0,0,0.6);
+backdrop-filter: blur(10px);
+z-index: 1000;
+}
+
+/* Profile icon */
+.profile-icon{
+width: 35px;
+height: 35px;
+border-radius: 50%;
+background: linear-gradient(45deg,#00c6ff,#007bff);
+display:flex;
+align-items:center;
+justify-content:center;
+cursor: pointer;
+color:white;
+}
+
+/* 🔥 FINAL DROPDOWN FIX */
+.profile-menu{
+position: fixed;
+top: 70px;
+right: 20px;
+background: rgba(0,0,0,0.95);
+border-radius: 12px;
+padding: 12px;
+display: none;
+min-width: 160px;
+z-index: 99999;
+box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+}
+
+/* Animation */
+.profile-menu.show {
+display: block;
+animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+from {opacity:0; transform: translateY(-10px);}
+to {opacity:1; transform: translateY(0);}
+}
+
+.profile-menu a{
+display:block;
+color:white;
+padding:8px;
+text-decoration:none;
+}
+
+.profile-menu a:hover{
+background:#00c6ff;
+border-radius:5px;
+}
+
+/* Card */
+.assessment-card{
+background: rgba(255,255,255,0.1);
+backdrop-filter: blur(12px);
+border-radius: 20px;
+padding: 25px;
+box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.btn-gradient{
+background: linear-gradient(45deg,#007bff,#00c6ff);
+border: none;
+border-radius: 30px;
+font-weight: bold;
+color: white;
+}
+</style>
+
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-dark custom-navbar fixed-top">
+<div class="container">
+
+<a class="navbar-brand fw-bold" href="Dashboard.html">🚀 Employee CRM</a>
+
+<button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#menu">
+<span class="navbar-toggler-icon"></span>
+</button>
+
+<div class="collapse navbar-collapse justify-content-end" id="menu">
+<ul class="navbar-nav align-items-center">
+
+<li class="nav-item">
+<a class="nav-link" href="Dashboard.html">Dashboard</a>
+</li>
+
+<li class="nav-item">
+<a class="nav-link" href="Employees.html">Employees</a>
+</li>
+
+<li class="nav-item">
+<a class="nav-link active" href="Assessment.html">Assessment</a>
+</li>
+
+<li class="nav-item">
+<a class="nav-link" href="Profile.html">Profile</a>
+</li>
+
+<li class="nav-item ms-3">
+<div class="profile-icon" id="profileBtn">P</div>
+</li>
+
+</ul>
+</div>
+
+</div>
+</nav>
+
+<!-- 🔥 MOVE DROPDOWN OUTSIDE NAVBAR -->
+<div class="profile-menu" id="profileMenu">
+<a href="Profile.html">View Profile</a>
+<a href="#">Settings</a>
+<a href="#">Logout</a>
+</div>
+
+<!-- MAIN -->
+<main class="container mt-4">
+
+<!-- Breadcrumb -->
+<nav aria-label="breadcrumb">
+<ol class="breadcrumb bg-transparent">
+<li class="breadcrumb-item">
+<a href="Dashboard.html" class="text-white">Home</a>
+</li>
+<li class="breadcrumb-item active text-info">Assessment</li>
+</ol>
+</nav>
+
+<h2 class="mb-4">📝 Employee Skill Assessment</h2>
+
+<section class="assessment-card">
+
+<div id="quizContainer">
+<div class="text-center">⏳ Loading questions...</div>
+</div>
+
+<button class="btn btn-gradient mt-4 w-100" id="submitQuiz">
+Submit Assessment 🚀
+</button>
+
+<div id="result" class="mt-4"></div>
+
+</section>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="text-center mt-5 mb-3">
+<p>Employee CRM System</p>
+</footer>
+
+<!-- SCRIPTS -->
+<script src="vendor/jquery/jquery.min.js"></script>
+<script src="vendor/bootstrap/bootstrap.bundle.min.js"></script>
+<script src="js/assessment.js"></script>
+<script src="js/app.js"></script>
+
+<script>
+// 🔥 FINAL DROPDOWN LOGIC
+
+$("#profileBtn").click(function(e){
+    e.stopPropagation();
+    $("#profileMenu").toggleClass("show");
+});
+
+$(document).click(function(){
+    $("#profileMenu").removeClass("show");
+});
+</script>
+
+</body>
+</html>

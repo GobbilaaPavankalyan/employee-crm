@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Employees</title>
+
+<link rel="stylesheet" href="vendor/bootstrap/bootstrap.min.css">
+<link rel="stylesheet" href="css/style.css">
+
+<style>
+body {
+background: linear-gradient(135deg, #1d2b64, #f8cdda);
+color: white;
+min-height: 100vh;
+padding-top: 70px;
+}
+
+.custom-navbar{
+background: rgba(0,0,0,0.6);
+backdrop-filter: blur(10px);
+}
+
+.nav-link.active{
+color: #00c6ff !important;
+}
+
+.profile-icon{
+width: 35px;
+height: 35px;
+border-radius: 50%;
+background: linear-gradient(45deg,#00c6ff,#007bff);
+display:flex;
+align-items:center;
+justify-content:center;
+cursor: pointer;
+color:white;
+}
+
+.profile-menu{
+position: absolute;
+right: 0;
+top: 45px;
+background: rgba(0,0,0,0.9);
+border-radius: 10px;
+padding: 10px;
+display: none;
+min-width: 140px;
+z-index: 1000;
+}
+
+.profile-menu a{
+display:block;
+color:white;
+padding:8px;
+text-decoration:none;
+}
+
+.profile-menu a:hover{
+background:#00c6ff;
+border-radius:5px;
+}
+
+.table-container{
+background: rgba(255,255,255,0.08);
+backdrop-filter: blur(12px);
+padding: 25px;
+border-radius: 20px;
+box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.custom-table{
+border-radius: 15px;
+overflow: hidden;
+color: white;
+}
+
+.custom-table thead{
+background: rgba(0,0,0,0.6);
+}
+
+.custom-table tbody tr{
+background: rgba(255,255,255,0.05);
+transition: 0.3s;
+}
+
+.custom-table tbody tr:hover{
+background: rgba(255,255,255,0.15);
+transform: scale(1.01);
+}
+
+.custom-table td, .custom-table th{
+padding: 14px;
+border: none;
+}
+
+.btn-toggle{
+background: linear-gradient(45deg,#ff9800,#ffc107);
+border: none;
+border-radius: 20px;
+}
+
+.btn-info{
+border-radius: 20px;
+}
+</style>
+
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-dark custom-navbar fixed-top">
+<div class="container">
+
+<a class="navbar-brand fw-bold" href="Dashboard.html">🚀 Employee CRM</a>
+
+<button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#menu">
+<span class="navbar-toggler-icon"></span>
+</button>
+
+<div class="collapse navbar-collapse justify-content-end" id="menu">
+
+<ul class="navbar-nav align-items-center">
+
+<li class="nav-item">
+<a class="nav-link" href="Dashboard.html">Dashboard</a>
+</li>
+
+<li class="nav-item">
+<a class="nav-link active" href="Employees.html">Employees</a>
+</li>
+
+<li class="nav-item">
+<a class="nav-link" href="Assessment.html">Assessment</a>
+</li>
+
+<li class="nav-item">
+<a class="nav-link" href="Profile.html">Profile</a>
+</li>
+
+<li class="nav-item ms-3 position-relative">
+<div class="profile-icon" id="profileBtn">P</div>
+
+<div class="profile-menu" id="profileMenu">
+<a href="Profile.html">View Profile</a>
+<a href="#">Settings</a>
+<a href="#">Logout</a>
+</div>
+</li>
+
+</ul>
+
+</div>
+</div>
+</nav>
+
+<!-- MAIN -->
+<main class="container mt-4">
+
+<!-- Breadcrumb -->
+<nav aria-label="breadcrumb">
+<ol class="breadcrumb bg-transparent">
+<li class="breadcrumb-item"><a href="Dashboard.html" class="text-white">Home</a></li>
+<li class="breadcrumb-item active text-info">Employees</li>
+</ol>
+</nav>
+
+<h2 class="mb-4">👥 Employee List</h2>
+
+<section class="table-container">
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+<h5 class="mb-0">Employee Records</h5>
+<span class="badge bg-info" id="empBadge">0 Employees</span>
+</div>
+
+<div class="table-responsive">
+
+<table class="table custom-table text-center align-middle">
+
+<thead>
+<tr>
+<th>ID</th>
+<th>Name</th>
+<th>Department</th>
+<th>Role</th>
+<th>Clients</th>
+<th>Status</th>
+<th>Action</th>
+<th>Details</th>
+</tr>
+</thead>
+
+<tbody id="employeeTable">
+<tr>
+<td colspan="8">Loading employees...</td>
+</tr>
+</tbody>
+
+</table>
+
+</div>
+
+</section>
+
+</main>
+
+<!-- MODAL -->
+<div class="modal fade" id="employeeModal">
+<div class="modal-dialog">
+<div class="modal-content bg-dark text-white">
+
+<div class="modal-header">
+<h5 class="modal-title">Employee Details</h5>
+<button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+</div>
+
+<div class="modal-body" id="modalBody"></div>
+
+</div>
+</div>
+</div>
+
+<!-- SCRIPTS -->
+<script src="vendor/jquery/jquery.min.js"></script>
+<script src="vendor/bootstrap/bootstrap.bundle.min.js"></script>
+<script src="js/employees.js"></script>
+
+<script>
+
+// Profile dropdown
+$("#profileBtn").click(function(e){
+e.stopPropagation();
+$("#profileMenu").toggle();
+});
+
+$(document).click(function(){
+$("#profileMenu").hide();
+});
+
+// Dynamic employee count
+document.addEventListener("DOMContentLoaded", function () {
+    let employees = JSON.parse(localStorage.getItem("employeesData")) || [];
+
+    if (employees.length === 0) {
+        employees = [
+            {id:101},{id:102},{id:103},{id:104}
+        ];
+    }
+
+    document.getElementById("empBadge").innerText = employees.length + " Employees";
+});
+
+// ✅ FIXED VIEW DETAILS FUNCTION
+function viewDetails(index){
+
+    let employees = JSON.parse(localStorage.getItem("employeesData")) || [];
+
+    if (employees.length === 0) {
+        employees = [
+            { id:101,name:"Pavankalyan",department:"Sales",role:"Manager",clients:["Client A","Client B"],active:true },
+            { id:102,name:"MS dhoni",department:"Marketing",role:"Executive",clients:["Client X"],active:true },
+            { id:103,name:"Shannu",department:"IT",role:"Developer",clients:["Client M","Client N"],active:false },
+            { id:104,name:"Kajal",department:"HR",role:"HR Manager",clients:["Client HR1"],active:true }
+        ];
+    }
+
+    let emp = employees[index];
+
+    // Save for profile
+    localStorage.setItem("selectedEmployee", JSON.stringify(emp));
+
+    // Show in modal
+    let clientsList = emp.clients.map(c => `<li>${c}</li>`).join("");
+
+    document.getElementById("modalBody").innerHTML = `
+        <p><strong>Name:</strong> ${emp.name}</p>
+        <p><strong>Department:</strong> ${emp.department}</p>
+        <p><strong>Role:</strong> ${emp.role}</p>
+        <p><strong>Status:</strong> ${emp.active ? "Active" : "Inactive"}</p>
+
+        <p><strong>Clients:</strong></p>
+        <ol>${clientsList}</ol>
+    `;
+}
+
+</script>
+
+</body>
+</html>

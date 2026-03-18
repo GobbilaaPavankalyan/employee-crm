@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Dashboard</title>
+
+<link rel="stylesheet" href="vendor/bootstrap/bootstrap.min.css">
+<link rel="stylesheet" href="css/style.css">
+
+<style>
+body {
+background: linear-gradient(135deg, #1d2b64, #f8cdda);
+color: white;
+min-height: 100vh;
+padding-top: 70px;
+}
+
+.custom-navbar{
+background: rgba(0,0,0,0.6);
+backdrop-filter: blur(10px);
+}
+
+.nav-link.active{
+color: #00c6ff !important;
+}
+
+.profile-icon{
+width: 35px;
+height: 35px;
+border-radius: 50%;
+background: linear-gradient(45deg,#00c6ff,#007bff);
+display:flex;
+align-items:center;
+justify-content:center;
+cursor: pointer;
+color:white;
+}
+
+.profile-menu{
+position: absolute;
+right: 0;
+top: 45px;
+background: rgba(0,0,0,0.9);
+border-radius: 10px;
+padding: 10px;
+display: none;
+min-width: 140px;
+z-index: 1000;
+}
+
+.profile-menu a{
+display:block;
+color:white;
+padding:8px;
+text-decoration:none;
+}
+
+.profile-menu a:hover{
+background:#00c6ff;
+border-radius:5px;
+}
+
+.glass-card {
+background: rgba(255,255,255,0.1);
+border-radius: 15px;
+backdrop-filter: blur(10px);
+padding: 20px;
+transition: 0.3s;
+}
+
+.glass-card:hover {
+transform: translateY(-5px);
+box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+.stat-number {
+font-size: 28px;
+font-weight: bold;
+}
+
+.activity-item {
+background: rgba(255,255,255,0.1);
+padding: 10px;
+border-radius: 10px;
+margin-bottom: 10px;
+}
+</style>
+
+</head>
+
+<body>
+
+<!-- HEADER -->
+<header>
+<nav class="navbar navbar-expand-lg navbar-dark custom-navbar fixed-top">
+<div class="container">
+
+<a class="navbar-brand fw-bold" href="Dashboard.html">🚀 Employee CRM</a>
+
+<button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#menu">
+<span class="navbar-toggler-icon"></span>
+</button>
+
+<div class="collapse navbar-collapse justify-content-end" id="menu">
+<ul class="navbar-nav align-items-center">
+
+<li class="nav-item">
+<a class="nav-link active" href="Dashboard.html">Dashboard</a>
+</li>
+
+<li class="nav-item">
+<a class="nav-link" href="Employees.html">Employees</a>
+</li>
+
+<li class="nav-item">
+<a class="nav-link" href="Assessment.html">Assessment</a>
+</li>
+
+<li class="nav-item">
+<a class="nav-link" href="Profile.html">Profile</a>
+</li>
+
+<li class="nav-item ms-3 position-relative">
+<div class="profile-icon" id="profileBtn">P</div>
+
+<div class="profile-menu" id="profileMenu">
+<a href="Profile.html">View Profile</a>
+<a href="#">Settings</a>
+<a href="#">Logout</a>
+</div>
+</li>
+
+</ul>
+</div>
+</div>
+</nav>
+</header>
+
+<!-- MAIN -->
+<main class="container mt-4">
+
+<!-- Breadcrumb -->
+<nav aria-label="breadcrumb">
+<ol class="breadcrumb bg-transparent">
+<li class="breadcrumb-item"><a href="Dashboard.html" class="text-white">Home</a></li>
+<li class="breadcrumb-item active text-info">Dashboard</li>
+</ol>
+</nav>
+
+<h2 class="mb-4">📊 Dashboard Overview</h2>
+
+<!-- EMPLOYEE STATS -->
+<section class="row g-4">
+
+<div class="col-md-3">
+<div class="glass-card text-center">
+<h6>Total Employees</h6>
+<div class="stat-number" id="empCount">0</div>
+</div>
+</div>
+
+<div class="col-md-3">
+<div class="glass-card text-center">
+<h6>Active Employees</h6>
+<div class="stat-number text-success" id="activeCount">0</div>
+</div>
+</div>
+
+<div class="col-md-3">
+<div class="glass-card text-center">
+<h6>Clients Assigned</h6>
+<div class="stat-number text-warning" id="clientCount">0</div>
+</div>
+</div>
+
+<div class="col-md-3">
+<div class="glass-card text-center">
+<h6>Assessments Done</h6>
+<div class="stat-number text-danger" id="assessmentCount">0</div>
+</div>
+</div>
+
+</section>
+
+<!-- CLIENT ASSIGNMENT -->
+<section class="mt-5">
+<h4>📂 Client Assignments</h4>
+<p>Total Clients Assigned: <strong id="clientCountText">0</strong></p>
+</section>
+
+<!-- PERFORMANCE -->
+<section class="mt-5">
+<h4>⚡ Performance Progress</h4>
+
+<div class="progress mt-3">
+<div id="progressBar" class="progress-bar bg-success" style="width:0%">0%</div>
+</div>
+
+<progress id="htmlProgress" value="0" max="100" class="w-100 mt-2"></progress>
+
+</section>
+
+<!-- RECENT ACTIVITIES -->
+<section class="mt-5">
+<h4>📝 Recent Activities</h4>
+<div id="activityContainer"></div>
+</section>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="text-center mt-5 mb-3">
+<p>Employee CRM System</p>
+</footer>
+
+<!-- SCRIPTS -->
+<script src="vendor/jquery/jquery.min.js"></script>
+<script src="vendor/bootstrap/bootstrap.bundle.min.js"></script>
+<script src="js/app.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    let employees = JSON.parse(localStorage.getItem("employeesData")) || [];
+
+    if (employees.length === 0) {
+        employees = [
+            {active:true, clients:["A","B"]},
+            {active:true, clients:["X"]},
+            {active:false, clients:["M","N"]},
+            {active:true, clients:["HR1"]}
+        ];
+    }
+
+    let total = employees.length;
+    let active = employees.filter(e => e.active).length;
+
+    let clients = 0;
+    employees.forEach(e => clients += e.clients.length);
+
+    let assessmentDone = localStorage.getItem("employeeScore") ? 1 : 0;
+
+    document.getElementById("empCount").innerText = total;
+    document.getElementById("activeCount").innerText = active;
+    document.getElementById("clientCount").innerText = clients;
+    document.getElementById("clientCountText").innerText = clients;
+    document.getElementById("assessmentCount").innerText = assessmentDone;
+
+    let score = localStorage.getItem("employeeScore");
+    score = score ? parseFloat(score) : 0;
+
+    let bar = document.getElementById("progressBar");
+    let htmlBar = document.getElementById("htmlProgress");
+
+    bar.style.width = score + "%";
+    bar.innerText = score ? score + "%" : "No Data";
+
+    htmlBar.value = score;
+
+    let activities = JSON.parse(localStorage.getItem("activities")) || [];
+
+    let activityHTML = "";
+
+    activities.slice(-3).reverse().forEach(a => {
+        activityHTML += `
+        <div class="activity-item">
+            ${a.text} <br>
+            <small>${a.time}</small>
+        </div>`;
+    });
+
+    if (activityHTML === "") {
+        activityHTML = `<div class="activity-item">No recent activity</div>`;
+    }
+
+    document.getElementById("activityContainer").innerHTML = activityHTML;
+
+});
+</script>
+
+</body>
+</html>

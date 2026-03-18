@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Profile</title>
+
+<link rel="stylesheet" href="vendor/bootstrap/bootstrap.min.css">
+<link rel="stylesheet" href="css/style.css">
+
+<style>
+body {
+background: linear-gradient(135deg, #1d2b64, #f8cdda);
+color: white;
+min-height: 100vh;
+padding-top: 70px;
+}
+
+/* Navbar */
+.custom-navbar{
+background: rgba(0,0,0,0.6);
+backdrop-filter: blur(10px);
+z-index: 1000;
+}
+
+/* Profile icon */
+.profile-icon{
+width: 35px;
+height: 35px;
+border-radius: 50%;
+background: linear-gradient(45deg,#00c6ff,#007bff);
+display:flex;
+align-items:center;
+justify-content:center;
+cursor: pointer;
+color:white;
+}
+
+/* 🔥 FINAL DROPDOWN FIX */
+.profile-menu{
+position: fixed;
+top: 70px;
+right: 20px;
+background: rgba(0,0,0,0.95);
+border-radius: 12px;
+padding: 12px;
+display: none;
+min-width: 160px;
+z-index: 99999;
+box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+}
+
+/* Animation */
+.profile-menu.show {
+display: block;
+animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+from {opacity:0; transform: translateY(-10px);}
+to {opacity:1; transform: translateY(0);}
+}
+
+.profile-menu a{
+display:block;
+color:white;
+padding:8px;
+text-decoration:none;
+}
+
+.profile-menu a:hover{
+background:#00c6ff;
+border-radius:5px;
+}
+
+.profile-card{
+background: rgba(255,255,255,0.1);
+backdrop-filter: blur(12px);
+border-radius: 20px;
+padding: 25px;
+}
+
+.progress{
+height: 25px;
+border-radius: 20px;
+}
+</style>
+
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-dark custom-navbar fixed-top">
+<div class="container">
+
+<a class="navbar-brand fw-bold" href="Dashboard.html">🚀 Employee CRM</a>
+
+<button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#menu">
+<span class="navbar-toggler-icon"></span>
+</button>
+
+<div class="collapse navbar-collapse justify-content-end" id="menu">
+
+<ul class="navbar-nav align-items-center">
+
+<li class="nav-item">
+<a class="nav-link" href="Dashboard.html">Dashboard</a>
+</li>
+
+<li class="nav-item">
+<a class="nav-link" href="Employees.html">Employees</a>
+</li>
+
+<li class="nav-item">
+<a class="nav-link" href="Assessment.html">Assessment</a>
+</li>
+
+<li class="nav-item">
+<a class="nav-link active" href="Profile.html">Profile</a>
+</li>
+
+<li class="nav-item ms-3">
+<div class="profile-icon" id="profileBtn">P</div>
+</li>
+
+</ul>
+
+</div>
+</div>
+</nav>
+
+<!-- 🔥 DROPDOWN MOVED OUTSIDE -->
+<div class="profile-menu" id="profileMenu">
+<a href="Profile.html">View Profile</a>
+<a href="#">Settings</a>
+<a href="#">Logout</a>
+</div>
+
+<!-- MAIN -->
+<main class="container mt-4">
+
+<!-- Breadcrumb -->
+<nav aria-label="breadcrumb">
+<ol class="breadcrumb bg-transparent">
+<li class="breadcrumb-item">
+<a href="Dashboard.html" class="text-white">Home</a>
+</li>
+<li class="breadcrumb-item active text-info">Profile</li>
+</ol>
+</nav>
+
+<h2 class="mb-4">👤 Employee Profile</h2>
+
+<section class="profile-card">
+
+<h4 id="empName">Loading...</h4>
+<p id="empDept"></p>
+<p id="empRole"></p>
+
+<hr>
+
+<h5>Assigned Clients</h5>
+<ol id="clientList"></ol>
+
+<hr>
+
+<h5>Performance</h5>
+
+<div class="progress mt-2">
+<div id="progressBar" class="progress-bar bg-success">0%</div>
+</div>
+
+<hr>
+
+<h5>Assessment Status</h5>
+<span id="gradeBadge" class="badge">N/A</span>
+
+<p class="mt-2"><strong>Feedback:</strong> <span id="feedbackText"></span></p>
+
+</section>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="text-center mt-5 mb-3">
+<p>Employee CRM System</p>
+</footer>
+
+<!-- SCRIPTS -->
+<script src="vendor/jquery/jquery.min.js"></script>
+<script src="vendor/bootstrap/bootstrap.bundle.min.js"></script>
+<script src="js/app.js"></script>
+
+<script>
+
+// 🔥 FINAL DROPDOWN LOGIC
+$("#profileBtn").click(function(e){
+e.stopPropagation();
+$("#profileMenu").toggleClass("show");
+});
+
+$(document).click(function(){
+$("#profileMenu").removeClass("show");
+});
+
+// Load selected employee
+let emp = JSON.parse(localStorage.getItem("selectedEmployee"));
+
+if (!emp) {
+    emp = {
+        name: "No Employee Selected",
+        department: "-",
+        role: "-",
+        clients: []
+    };
+}
+
+$("#empName").text(emp.name);
+$("#empDept").text("Department: " + emp.department);
+$("#empRole").text("Role: " + (emp.role || "-"));
+
+$("#clientList").html("");
+emp.clients.forEach(c => {
+    $("#clientList").append(`<li>${c}</li>`);
+});
+
+// Score & Grade
+let score = localStorage.getItem("employeeScore") || 0;
+let grade = localStorage.getItem("employeeGrade") || "N/A";
+let feedback = localStorage.getItem("employeeFeedback") || "No feedback";
+
+score = parseFloat(score);
+
+// Progress
+$("#progressBar")
+.css("width", score + "%")
+.text(score + "%");
+
+// Badge color
+let badgeClass;
+
+if (grade === "A") badgeClass = "bg-success";
+else if (grade === "B") badgeClass = "bg-primary";
+else if (grade === "C") badgeClass = "bg-warning text-dark";
+else badgeClass = "bg-danger";
+
+$("#gradeBadge")
+.removeClass()
+.addClass("badge " + badgeClass)
+.text(grade);
+
+$("#feedbackText").text(feedback);
+
+</script>
+
+</body>
+</html>
